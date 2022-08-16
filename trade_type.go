@@ -374,11 +374,12 @@ type RoyaltyParameter struct {
 // TradeOrderSettleRsp 统一收单交易结算接口响应参数
 type TradeOrderSettleRsp struct {
 	Content struct {
-		Code    Code   `json:"code"`
-		Msg     string `json:"msg"`
-		SubCode string `json:"sub_code"`
-		SubMsg  string `json:"sub_msg"`
-		TradeNo string `json:"trade_no"`
+		Code     Code   `json:"code"`
+		Msg      string `json:"msg"`
+		SubCode  string `json:"sub_code,omitempty"`
+		SubMsg   string `json:"sub_msg,omitempty"`
+		TradeNo  string `json:"trade_no,omitempty"`
+		SettleNo string `json:"settle_no,omitempty"`
 	} `json:"alipay_trade_order_settle_response"`
 	Sign string `json:"sign"`
 }
