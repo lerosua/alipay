@@ -27,7 +27,7 @@ type Trade struct {
 	SettleInfo          *SettleInfo            `json:"settle_info,omitempty"`           // 描述结算信息，json格式，详见结算参数说明
 	SpecifiedChannel    string                 `json:"specified_channel,omitempty"`     // 指定渠道，目前仅支持传入pcredit  若由于用户原因渠道不可用，用户可选择是否用其他渠道支付。  注：该参数不可与花呗分期参数同时传入
 	StoreId             string                 `json:"store_id,omitempty"`              // 商户门店编号。该参数用于请求参数中以区分各门店，非必传项。
-	SubMerchant         *SubMerchant           `json:"sub_merchant,omitempty"`          // 间连受理商户信息体，当前只对特殊银行机构特定场景下使用此字段
+	SubMerchant         *SubMerchantItem       `json:"sub_merchant,omitempty"`          // 间连受理商户信息体，当前只对特殊银行机构特定场景下使用此字段
 	TimeoutExpress      string                 `json:"timeout_express,omitempty"`       // 该笔订单允许的最晚付款时间，逾期将关闭交易。取值范围：1m～15d。m-分钟，h-小时，d-天，1c-当天（1c-当天的情况下，无论交易何时创建，都在0点关闭）。 该参数数值不接受小数点， 如 1.5h，可转换为 90m。
 	TimeExpire          string                 `json:"time_expire,omitempty"`           // 该笔订单绝对超时时间，格式为yyyy-MM-dd HH:mm:ss
 }
@@ -423,17 +423,17 @@ type RoyaltyInfo struct {
 }
 
 type RoyaltyDetailInfoItem struct {
-	SerialNo         string `json:"serial_no"`
+	SerialNo         string `json:"serial_no,omitempty"`
 	TransInType      string `json:"trans_in_type"`
-	BatchNo          string `json:"batch_no"`
-	OutRelationId    string `json:"out_relation_id"`
+	BatchNo          string `json:"batch_no,omitempty"`
+	OutRelationId    string `json:"out_relation_id,omitempty"`
 	TransOutType     string `json:"trans_out_type"`
 	TransOut         string `json:"trans_out"`
 	TransIn          string `json:"trans_in"`
 	Amount           string `json:"amount"`
 	Desc             string `json:"desc"`
-	AmountPercentage string `json:"amount_percentage"`
-	AliPayStoreId    string `json:"alipay_store_id"`
+	AmountPercentage string `json:"amount_percentage,omitempty"`
+	AliPayStoreId    string `json:"alipay_store_id,omitempty"`
 }
 
 type SubMerchantItem struct {
@@ -653,13 +653,50 @@ type TradeOrderInfoSyncRsp struct {
 	Sign string `json:"sign"`
 }
 
-type SubMerchant struct {
-	MerchantId string `json:"merchant_id"`
-}
 type SettleDetailInfo struct {
 	Amount      string `json:"amount"`
 	TransInType string `json:"trans_in_type"`
 }
 type SettleInfo struct {
 	SettleDetailInfos []*SettleDetailInfo `json:"settle_detail_infos"`
+}
+
+type TradeOrderSettleQuery struct {
+	AppAuthToken string `json:"-"`                   // 可选
+	SettleNo     string `json:"settle_no,omitempty"` // 支付宝分账号
+}
+
+func (this TradeOrderSettleQuery) APIName() string {
+	return "alipay.trade.order.settle.query"
+}
+
+func (this TradeOrderSettleQuery) Params() map[string]string {
+	var m = make(map[string]string)
+	m["app_auth_token"] = this.AppAuthToken
+	return m
+}
+
+type TradeOrderSettleQueryRsp struct {
+	Content struct {
+		Code              Code             `json:"code"`
+		Msg               string           `json:"msg"`
+		SubCode           string           `json:"sub_code"`
+		SubMsg            string           `json:"sub_msg"`
+		OutRequestNo      string           `json:"out_request_no"`      //商户分账请求单号
+		OperationDate     string           `json:"operation_dt"`        //分账受理时间
+		RoyaltyDetailList []*RoyaltyDetail `json:"royalty_detail_list"` //分账明细
+	} `json:"alipay_trade_order_settle_query_response"`
+	Sign string `json:"sign"`
+}
+type RoyaltyDetail struct {
+	TransInType   string `json:"trans_in_type"`            //分账转入账号类型，userId表示是支付宝账号对应的支付宝唯一用户号，loginName表示是支付宝登录号，secondMerchantID表示是二级商户id。 只有在operation_type为replenish_refund(退补差)，transfer(分账)才返回该字段
+	TransOutType  string `json:"trans_out_type"`           //分账转出账号类型，userId表示是支付宝账号对应的支付宝唯一用户号，loginName表示是支付宝登录号，secondMerchantID表示是二级商户id。 只有在operation_type为replenish(补差)，transfer_refund(退分账)类型才返回该字段
+	TransIn       string `json:"trans_in"`                 //分账转入账号，只有在operation_type为replenish_refund(退补差)，transfer(分账)才返回该字段
+	TransOut      string `json:"trans_out"`                //分账转出账号，只有在operation_type为replenish(补差),transfer_refund(退分账)类型才返回该字段
+	Amount        string `json:"amount"`                   //分账金额 元
+	OperationType string `json:"operation_type,omitempty"` //分账操作类型。有以下几种类型： replenish(补差)、replenish_refund(退补差)、transfer(分账)、transfer_refund(退分账)
+	ExecuteDt     string `json:"execute_dt,omitempty"`     //分账执行时间
+	State         string `json:"state,omitempty"`          //分账状态，SUCCESS成功，FAIL失败，PROCESSING处理中
+	ErrorCode     string `json:"error_code,omitempty"`     //分账失败错误码，只在分账失败时返回
+	ErrorDesc     string `json:"error_desc,omitempty"`     //分账错误描述信息
 }
