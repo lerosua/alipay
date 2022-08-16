@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	alipay "github.com/smartwalle/alipay/v3"
+	alipay "github.com/lerosua/alipay/v3"
 )
 
 var (
