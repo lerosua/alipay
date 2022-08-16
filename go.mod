@@ -1,4 +1,4 @@
-module github.com/lerosua/alipay/v3
+module github.com/lerosua/alipay
 
 require github.com/smartwalle/crypto4go v1.0.2
 
