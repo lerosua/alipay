@@ -346,11 +346,13 @@ type DepositBackInfo struct {
 
 // TradeOrderSettle 统一收单交易结算接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.order.settle
 type TradeOrderSettle struct {
-	AppAuthToken      string              `json:"-"`                  // 可选
-	OutRequestNo      string              `json:"out_request_no"`     // 必须 结算请求流水号 开发者自行生成并保证唯一性
-	TradeNo           string              `json:"trade_no"`           // 必须 支付宝订单号
-	RoyaltyParameters []*RoyaltyParameter `json:"royalty_parameters"` // 必须 分账明细信息
-	OperatorId        string              `json:"operator_id"`        //可选 操作员id
+	AppAuthToken      string                 `json:"-"`                       // 可选
+	OutRequestNo      string                 `json:"out_request_no"`          // 必须 结算请求流水号 开发者自行生成并保证唯一性
+	TradeNo           string                 `json:"trade_no"`                // 必须 支付宝订单号
+	RoyaltyParameters []*RoyaltyParameter    `json:"royalty_parameters"`      // 必须 分账明细信息
+	OperatorId        string                 `json:"operator_id"`             //可选 操作员id
+	ExtendParams      map[string]interface{} `json:"extend_params,omitempty"` //可选 业务扩展参数，详见下面的“业务扩展参数说明”
+	RoyaltyMode       string                 `json:"royalty_mode,omitempty"`  //可选 分账模式，目前有两种分账同步执行sync，分账异步执行async，不传默认同步执行
 }
 
 func (this TradeOrderSettle) APIName() string {
