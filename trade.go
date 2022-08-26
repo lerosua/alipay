@@ -92,27 +92,3 @@ func (this *Client) TradeRefundAsync(param TradeRefundAsync) (result *TradeRefun
 	err = this.doRequest("POST", param, &result)
 	return result, err
 }
-
-// LifeTradePay (生活代扣)统一收单交易支付接口 https://docs.open.alipay.com/api_1/alipay.trade.pay/
-func (this *Client) LifeTradePay(param TradePay) (result *TradePayRsp, err error) {
-	err = this.doRequest("POST", param, &result)
-	return result, err
-}
-
-// TradeRefund (生活代扣)统一收单交易退款接口 https://docs.open.alipay.com/api_1/alipay.trade.refund/
-func (this *Client) LifeTradeRefund(param TradeRefund) (result *TradeRefundRsp, err error) {
-	err = this.doRequest("POST", param, &result)
-	return result, err
-}
-
-// TradeOrderSettle (生活代扣)统一收单交易结算接口 https://docs.open.alipay.com/api_1/alipay.trade.order.settle
-func (this *Client) LifeTradeOrderSettle(param TradeOrderSettle) (result *TradeOrderSettleRsp, err error) {
-	err = this.doRequest("POST", param, &result)
-	return result, err
-}
-
-// TradeOrderSettle (生活代扣)交易分账查询接口 https://docs.open.alipay.com/api_1/alipay.trade.order.settle.query
-func (this *Client) LifeTradeOrderSettleQuery(param TradeOrderSettleQuery) (result *TradeOrderSettleQueryRsp, err error) {
-	err = this.doRequest("POST", param, &result)
-	return result, err
-}
