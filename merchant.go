@@ -30,6 +30,18 @@ func (this *Client) MerchantSimpleCreate(param MerchantSimpleCreate) (result *Me
 	return result, err
 }
 
+//ant.merchant.expand.indirect.zft.consult(直付通商户创建预校验咨询)
+func (this *Client) MerchantConsult(param MerchantSimpleCreate) (result *MerchantSimpleCreateRsp, err error) {
+	err = this.DoRequest("POST", param, &result)
+	return result, err
+}
+
+//ant.merchant.expand.indirect.zftorder.query(直付通商户入驻进度查询)
+func (this *Client) MerchantQuery(param MerchantQuery) (result *MerchantQueryRsp, err error) {
+	err = this.DoRequest("POST", param, &result)
+	return result, err
+}
+
 // alipay.trade.royalty.relation.bind(分账关系绑定)
 func (this *Client) RoyaltyBind(param RoyaltyBind) (result *RoyaltyBindRsp, err error) {
 	err = this.DoRequest("POST", param, &result)

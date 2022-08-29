@@ -58,6 +58,38 @@ func (this *MerchantSimpleCreateRsp) IsSuccess() bool {
 	return false
 }
 
+type MerchantQuery struct {
+	OrderId    string `json:"order_id"`              //申请单id。通过 ant.merchant.expand.indirect.zft.create(直付通二级商户创建)接口返回。
+	ExternalId string `json:"external_id,omitempty"` //进件申请时的外部商户id，与order_id二选一必填
+}
+
+func (this MerchantQuery) APIName() string {
+	return "ant.merchant.expand.indirect.zftorder.query"
+}
+
+func (this MerchantQuery) Params() map[string]string {
+	var m = make(map[string]string)
+	return m
+}
+
+type MerchantQueryRsp struct {
+	Content struct {
+		Code    Code            `json:"code"`
+		Msg     string          `json:"msg"`
+		SubCode string          `json:"sub_code"`
+		SubMsg  string          `json:"sub_msg"`
+		Orders  []MerchantOrder `json:"orders,omitempty"` // 直付通二级商户进件申请单信息
+	} `json:"ant_merchant_expand_indirect_zftorder_query_response"`
+	Sign string `json:"sign"`
+}
+
+func (this *MerchantQueryRsp) IsSuccess() bool {
+	if this.Content.Code == CodeSuccess {
+		return true
+	}
+	return false
+}
+
 type SettleCardInfo struct {
 	AccountHolderName   string `json:"account_holder_name"`   //卡户名
 	AccountNo           string `json:"account_no"`            //卡号
@@ -126,4 +158,24 @@ type RoyaltyBindRsp struct {
 		ResultCode string `json:"result_code,omitempty"` //SUCCESS：分账关系绑定成功； FAIL：分账关系绑定失败。
 	} `json:"alipay_trade_royalty_relation_bind_response"`
 	Sign string `json:"sign"`
+}
+
+type MerchantOrder struct {
+	OrderId      string `json:"order_id"`      //申请单id
+	ExternalId   string `json:"external_id"`   //外部商户id
+	MerchantName string `json:"merchant_name"` //进件时填写的商户名称
+	Status       string `json:"status"`        //申请总体状态。99:已完结;-1:失败;031:审核中
+	ApplyTime    string `json:"apply_time"`    //申请单创建时间 2017-11-11 12:00:00
+	FkAudit      string `json:"fk_audit"`      //风控审核状态。CREATE：已创建待审批、SKIP：跳过风控审批步骤、PASS：风控审核通过、REJECT：风控审批拒绝
+	FkAuditMemo  string `json:"fk_audit_memo"` //风控审批备注，如有则返回
+	KzAudit      string `json:"kz_audit"`      //客资审核状态。CREATE：已创建待审批、SKIP：跳过客资审批步骤、PASS：客资审核通过、REJECT：客资审批拒绝
+	KzAuditMemo  string `json:"kz_audit_memo"` //客资审批备注，如有则返回
+	SubConfirm   string `json:"sub_confirm"`   //二级商户确认状态。CREATE：已发起二级商户确认、SKIP：无需确认、FAIL：签约失败、NOT_CONFIRM：商户未确认、FINISH签约完成
+	CardAliasNo  string `json:"card_alias_no"` //进件生成的卡编号，在发起结算时可以作为结算账号
+	Smid         string `json:"smid"`          //二级商户id。当总体申请状态status为99时，smid才算进件完成
+	ApplyType    string `json:"apply_type"`    //本申请单的请求类型。一般可选值包括ZHIFUTONG_CONSULT（直付通商户预校验）/ZHIFUTONG_CREATE（直付通商户创建）/ZHIFUTONG_MODIFY（直付通商户修改）
+	AppPreAuth   string `json:"app_pre_auth"`  //是否开通线上预授权
+	FacePreAuth  string `json:"face_pre_auth"` //是否开通线下预授权
+	IsFaceLimit  string `json:"is_face_limit"` //判断个人当面付权限版本，返回TRUE时表示是标准版，返回FALSE表示受限版s
+	Reason       string `json:"reason"`        //申请单处理失败时，通过此此段返回具体的失败理由；与kf_audit_memo和kz_audit_memo配合使用
 }
