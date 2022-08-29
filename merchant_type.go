@@ -26,7 +26,7 @@ type MerchantSimpleCreate struct {
 	AdditionalCertNo       string            `json:"additional_cert_no,omitempty"`        //补充证件号，与additional_cert_type+additional_cert_image同时提供。当商户类型为个人时，使用当面付收款有限额，补充这组证件信息可提额。目前仅允许个人类型商户传入本字段。
 	AdditionalCertImage    string            `json:"additional_cert_image,omitempty"`     //补充证件图片，与additional_cert_no、additional_cert_type同时提供。当商户类型为个人时，使用当面付收款有限额，补充这组证件信息可提额。目前仅允许个人类型商户传入。其值为使用ant.merchant.expand.indirect.image.upload上传图片得到的一串oss key。
 	signTimeWithIsv        string            `json:"sign_time_with_isv,omitempty"`        //二级商户与服务商的签约时间。
-	BizCards               SettleCardInfo    `json:"biz_cards,omitempty"`                 //结算银行卡信息，如果结算到支付宝账号，则不需要填写。本业务当前只允许传入一张结算卡。个人类型商户不允许结算到银行卡
+	BizCards               *SettleCardInfo   `json:"biz_cards,omitempty"`                 //结算银行卡信息，如果结算到支付宝账号，则不需要填写。本业务当前只允许传入一张结算卡。个人类型商户不允许结算到银行卡
 	LicenseAuthLetterImage string            `json:"license_auth_letter_image,omitempty"` //授权函。当商户名与结算卡户名不一致（模板参考https://gw.alipayobjects.com/os/skylark-tools/public/files/d5fcbe7463d7159a0d362da417d157ed.docx），或涉及外籍法人（这种情况上传任意能证明身份的图片）时必填，其值为使用ant.merchant.expand.indirect.image.upload上传图片得到的一串oss key。
 }
 
