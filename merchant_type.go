@@ -179,3 +179,35 @@ type MerchantOrder struct {
 	IsFaceLimit  string `json:"is_face_limit"` //判断个人当面付权限版本，返回TRUE时表示是标准版，返回FALSE表示受限版s
 	Reason       string `json:"reason"`        //申请单处理失败时，通过此此段返回具体的失败理由；与kf_audit_memo和kz_audit_memo配合使用
 }
+
+type MerchantDelete struct {
+	AppAuthToken string `json:"-"`    // 可选
+	Smid         string `json:"smid"` //商户号
+}
+
+func (this MerchantDelete) APIName() string {
+	return "ant.merchant.expand.indirect.zft.delete"
+}
+
+func (this MerchantDelete) Params() map[string]string {
+	var m = make(map[string]string)
+	m["app_auth_token"] = this.AppAuthToken
+	return m
+}
+
+type MerchantDeleteRsp struct {
+	Content struct {
+		Code    Code   `json:"code"`
+		Msg     string `json:"msg"`
+		SubCode string `json:"sub_code"`
+		SubMsg  string `json:"sub_msg"`
+	} `json:"ant_merchant_expand_indirect_zft_delete_response"`
+	Sign string `json:"sign"`
+}
+
+func (this *MerchantDeleteRsp) IsSuccess() bool {
+	if this.Content.Code == CodeSuccess {
+		return true
+	}
+	return false
+}

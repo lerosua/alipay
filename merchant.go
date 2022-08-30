@@ -42,6 +42,12 @@ func (this *Client) MerchantQuery(param MerchantQuery) (result *MerchantQueryRsp
 	return result, err
 }
 
+//ant.merchant.expand.indirect.zft.delete(直付通二级商户作废)
+func (this *Client) MerchantDelete(param MerchantDelete) (result *MerchantDeleteRsp, err error) {
+	err = this.DoRequest("POST", param, &result)
+	return result, err
+}
+
 // alipay.trade.royalty.relation.bind(分账关系绑定)
 func (this *Client) RoyaltyBind(param RoyaltyBind) (result *RoyaltyBindRsp, err error) {
 	err = this.DoRequest("POST", param, &result)
