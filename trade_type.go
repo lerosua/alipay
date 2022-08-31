@@ -11,18 +11,18 @@ type Trade struct {
 	TotalAmount string `json:"total_amount"` // 订单总金额，单位为元，精确到小数点后两位，取值范围[0.01,100000000]
 	ProductCode string `json:"product_code"` // 销售产品码，与支付宝签约的产品码名称。 参考官方文档, App 支付时默认值为 QUICK_MSECURITY_PAY
 
-	Body               string `json:"body,omitempty"`                 // 订单描述
-	BusinessParams     string `json:"business_params,omitempty"`      // 商户传入业务信息，具体值要和支付宝约定，应用于安全，营销等参数直传场景，格式为json格式
-	DisablePayChannels string `json:"disable_pay_channels,omitempty"` // 禁用渠道，用户不可用指定渠道支付 当有多个渠道时用“,”分隔 注，与enable_pay_channels互斥
-	EnablePayChannels  string `json:"enable_pay_channels,omitempty"`  // 可用渠道，用户只能在指定渠道范围内支付  当有多个渠道时用“,”分隔 注，与disable_pay_channels互斥
-	//ExtUserInfo        string `json:"ext_user_info,omitempty"`        // 外部指定买家
+	Body                string                 `json:"body,omitempty"`                  // 订单描述
+	BusinessParams      string                 `json:"business_params,omitempty"`       // 商户传入业务信息，具体值要和支付宝约定，应用于安全，营销等参数直传场景，格式为json格式
+	DisablePayChannels  string                 `json:"disable_pay_channels,omitempty"`  // 禁用渠道，用户不可用指定渠道支付 当有多个渠道时用“,”分隔 注，与enable_pay_channels互斥
+	EnablePayChannels   string                 `json:"enable_pay_channels,omitempty"`   // 可用渠道，用户只能在指定渠道范围内支付  当有多个渠道时用“,”分隔 注，与disable_pay_channels互斥
+	ExtUserInfo         *ExtUserInfo           `json:"ext_user_info,omitempty"`         // 外部指定买家
 	ExtendParams        map[string]interface{} `json:"extend_params,omitempty"`         // 业务扩展参数，详见下面的“业务扩展参数说明”
 	AgreementSignParams interface{}            `json:"agreement_sign_params,omitempty"` // 签约参数。如果希望在sdk中支付并签约，需要在这里传入签约信息。 周期扣款场景 product_code 为 CYCLE_PAY_AUTH 时必填。
 	GoodsType           string                 `json:"goods_type,omitempty"`            // 商品主类型：0—虚拟类商品，1—实物类商品 注：虚拟类商品不支持使用花呗渠道
-	InvoiceInfo         string                 `json:"invoice_info,omitempty"`          // 开票信息
+	InvoiceInfo         *InvoiceInfo           `json:"invoice_info,omitempty"`          // 开票信息
 	PassbackParams      string                 `json:"passback_params,omitempty"`       // 公用回传参数，如果请求时传递了该参数，则返回给商户时会回传该参数。支付宝会在异步通知时将该参数原样返回。本参数必须进行UrlEncode之后才可以发送给支付宝
 	PromoParams         string                 `json:"promo_params,omitempty"`          // 优惠参数 注：仅与支付宝协商后可用
-	RoyaltyInfo         string                 `json:"royalty_info,omitempty"`          // 描述分账信息，json格式，详见分账参数说明
+	RoyaltyInfo         *RoyaltyInfo           `json:"royalty_info,omitempty"`          // 描述分账信息，json格式，详见分账参数说明
 	SellerId            string                 `json:"seller_id,omitempty"`             // 收款支付宝用户ID。 如果该值为空，则默认为商户签约账号对应的支付宝用户ID
 	SettleInfo          *SettleInfo            `json:"settle_info,omitempty"`           // 描述结算信息，json格式，详见结算参数说明
 	SpecifiedChannel    string                 `json:"specified_channel,omitempty"`     // 指定渠道，目前仅支持传入pcredit  若由于用户原因渠道不可用，用户可选择是否用其他渠道支付。  注：该参数不可与花呗分期参数同时传入
@@ -702,4 +702,46 @@ type RoyaltyDetail struct {
 	State         string `json:"state,omitempty"`          //分账状态，SUCCESS成功，FAIL失败，PROCESSING处理中
 	ErrorCode     string `json:"error_code,omitempty"`     //分账失败错误码，只在分账失败时返回
 	ErrorDesc     string `json:"error_desc,omitempty"`     //分账错误描述信息
+}
+
+type InvoiceKeyInfo struct {
+	IsSupportInvoice    bool   `json:"is_support_invoice"`    //该交易是否支持开票
+	InvoiceMerchantName string `json:"invoice_merchant_name"` //开票商户名称：商户品牌简称|商户门店简称 ABC|003
+	TaxNum              string `json:"tax_num"`               //税号 1464888883494
+}
+type InvoiceInfo struct {
+	Details string         `json:"details"`  //开票内容 注：json数组格式 [{"code":"100294400","name":"服饰","num":"2","sumPrice":"200.00","taxRate":"6%"}]
+	KeyInfo InvoiceKeyInfo `json:"key_info"` //开票关键信息
+}
+
+type ExtUserInfo struct {
+	Name     string `json:"name,omitempty"`   //指定买家姓名。 注： need_check_info=T或fix_buyer=T时该参数才有效
+	Mobile   string `json:"mobile,omitempty"` //指定买家手机号。 注：该参数暂不校验
+	CertType string `json:"cert_type,omitempty"`
+	/***指定买家证件类型。 枚举值：
+	IDENTITY_CARD：身份证；
+	PASSPORT：护照；
+	OFFICER_CARD：军官证；
+	SOLDIER_CARD：士兵证；
+	HOKOU：户口本。如有其它类型需要支持，请与蚂蚁金服工作人员联系。
+	注： need_check_info=T或fix_buyer=T时该参数才有效，支付宝会比较买家在支付宝留存的证件类型与该参数传入的值是否匹配
+	***/
+
+	CertNo string `json:"cert_no,omitempty"` //买家证件号。注：need_check_info=T或fix_buyer=T时该参数才有效，支付宝会比较买家在支付宝留存的证件号码与该参数传入的值是否匹配。
+	MinAge string `json:"min_age,omitempty"`
+	/***
+	允许的最小买家年龄。
+	买家年龄必须大于等于所传数值
+	注：
+	1. need_check_info=T时该参数才有效
+	2. min_age为整数，必须大于等于0
+	*/
+	NeedCheckInfo string `json:"need_check_info,omitempty"`
+	/***
+	是否强制校验买家信息；
+	需要强制校验传：T;
+	不需要强制校验传：F或者不传；
+	当传T时，支付宝会校验支付买家的信息与接口上传递的cert_type、cert_no、name或age是否匹配，只有接口传递了信息才会进行对应项的校验；只要有任何一项信息校验不匹配交易都会失败。如果传递了need_check_info，但是没有传任何校验项，则不进行任何校验。
+	默认为不校验。
+	*/
 }

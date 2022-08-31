@@ -48,13 +48,13 @@ func (this *Client) MerchantDelete(param MerchantDelete) (result *MerchantDelete
 	return result, err
 }
 
-// alipay.trade.royalty.relation.bind(分账关系绑定)
+// alipay.trade.royalty.relation.bind (分账关系绑定)
 func (this *Client) RoyaltyBind(param RoyaltyBind) (result *RoyaltyBindRsp, err error) {
 	err = this.DoRequest("POST", param, &result)
 	return result, err
 }
 
-//alipay.trade.royalty.relation.unbind(分账关系解绑)
+//alipay.trade.royalty.relation.unbind (分账关系解绑)
 func (this *Client) RoyaltyUnBind(param RoyaltyUnBind) (result *RoyaltyBindRsp, err error) {
 	err = this.DoRequest("POST", param, &result)
 	return result, err
