@@ -36,6 +36,12 @@ func (this *Client) MerchantConsult(param MerchantSimpleCreate) (result *Merchan
 	return result, err
 }
 
+//ant.merchant.expand.indirect.zft.settlementmodify(直付通二级商户结算信息修改)
+func (this *Client) MerchantSettlementModify(param MerchantSettlementModify) (result *MerchantSettlementModifyRsp, err error) {
+	err = this.DoRequest("POST", param, &result)
+	return result, err
+}
+
 //ant.merchant.expand.indirect.zftorder.query(直付通商户入驻进度查询)
 func (this *Client) MerchantQuery(param MerchantQuery) (result *MerchantQueryRsp, err error) {
 	err = this.DoRequest("POST", param, &result)

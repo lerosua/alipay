@@ -211,3 +211,41 @@ func (this *MerchantDeleteRsp) IsSuccess() bool {
 	}
 	return false
 }
+
+type MerchantSettlementModify struct {
+	AppAuthToken           string            `json:"-"`                                   // 可选
+	Smid                   string            `json:"smid"`                                //二级商户支付宝商户号，进件成功后由支付宝返回
+	DefaultSettleRule      DefaultSettleRule `json:"default_settle_rule"`                 //默认结算规则
+	AlipayLogonId          string            `json:"alipay_logon_id"`                     //结算支付宝账号，结算账号使用支付宝账号时必填。本字段要求与商户名称name同名，且是实名认证支付宝账户(个体工商户可以与name或cert_name相同)
+	BizCards               *SettleCardInfo   `json:"biz_cards,omitempty"`                 //结算银行卡信息，如果结算到支付宝账号，则不需要填写。本业务当前只允许传入一张结算卡。个人类型商户不允许结算到银行卡
+	LicenseAuthLetterImage string            `json:"license_auth_letter_image,omitempty"` //授权函。当商户名与结算卡户名不一致（模板参考https://gw.alipayobjects.com/os/skylark-tools/public/files/d5fcbe7463d7159a0d362da417d157ed.docx），或涉及外籍法人（这种情况上传任意能证明身份的图片）时必填，其值为使用ant.merchant.expand.indirect.image.upload上传图片得到的一串oss key。
+}
+
+func (this MerchantSettlementModify) APIName() string {
+	return "ant.merchant.expand.indirect.zft.settlementmodify"
+
+}
+
+func (this MerchantSettlementModify) Params() map[string]string {
+	var m = make(map[string]string)
+	m["app_auth_token"] = this.AppAuthToken
+	return m
+}
+
+type MerchantSettlementModifyRsp struct {
+	Content struct {
+		Code    Code   `json:"code"`
+		Msg     string `json:"msg"`
+		SubCode string `json:"sub_code"`
+		SubMsg  string `json:"sub_msg"`
+		OrderId string `json:"order_id,omitempty"` // 申请单id
+	} `json:"ant_merchant_expand_indirect_zft_settlementmodify_response"`
+	Sign string `json:"sign"`
+}
+
+func (this *MerchantSettlementModifyRsp) IsSuccess() bool {
+	if this.Content.Code == CodeSuccess {
+		return true
+	}
+	return false
+}
