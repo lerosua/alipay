@@ -215,16 +215,18 @@ type TradeCloseRsp struct {
 
 // TradeRefund 统一收单交易退款接口请求参数 https://docs.open.alipay.com/api_1/alipay.trade.refund/
 type TradeRefund struct {
-	AppAuthToken   string `json:"-"`                      // 可选
-	OutTradeNo     string `json:"out_trade_no,omitempty"` // 与 TradeNo 二选一
-	TradeNo        string `json:"trade_no,omitempty"`     // 与 OutTradeNo 二选一
-	OutRequestNo   string `json:"out_request_no"`         // 必须 标识一次退款请求，同一笔交易多次退款需要保证唯一，如需部分退款，则此参数必传。
-	RefundAmount   string `json:"refund_amount"`          // 必须 需要退款的金额，该金额不能大于订单金额,单位为元，支持两位小数
-	RefundCurrency string `json:"refund_currency"`        // 可选 订单退款币种信息
-	RefundReason   string `json:"refund_reason"`          // 可选 退款的原因说明
-	OperatorId     string `json:"operator_id"`            // 可选 商户的操作员编号
-	StoreId        string `json:"store_id"`               // 可选 商户的门店编号
-	TerminalId     string `json:"terminal_id"`            // 可选 商户的终端编号
+	AppAuthToken      string              `json:"-"`                         // 可选
+	OutTradeNo        string              `json:"out_trade_no,omitempty"`    // 与 TradeNo 二选一
+	TradeNo           string              `json:"trade_no,omitempty"`        // 与 OutTradeNo 二选一
+	OutRequestNo      string              `json:"out_request_no"`            // 必须 标识一次退款请求，同一笔交易多次退款需要保证唯一，如需部分退款，则此参数必传。
+	RefundAmount      string              `json:"refund_amount"`             // 必须 需要退款的金额，该金额不能大于订单金额,单位为元，支持两位小数
+	RefundCurrency    string              `json:"refund_currency"`           // 可选 订单退款币种信息
+	RefundReason      string              `json:"refund_reason"`             // 可选 退款的原因说明
+	OperatorId        string              `json:"operator_id"`               // 可选 商户的操作员编号
+	StoreId           string              `json:"store_id"`                  // 可选 商户的门店编号
+	TerminalId        string              `json:"terminal_id"`               // 可选 商户的终端编号
+	RoyaltyParameters []*RoyaltyParameter `json:"refund_royalty_parameters"` // 可选 退分账明细信息
+
 }
 
 func (this TradeRefund) APIName() string {
